@@ -57,7 +57,6 @@ Let's save the pings for other people or announcements, not your random bullshit
                     await message.channel.send(f"{message.author.mention} ***SINCE WHEN WERE YOU THE ONE IN CONTROL?***")
                 except discord.Forbidden:
                     await message.channel.send("***I would time you out, but you're stronger than me...***")
-                recent_pings.clear()
             else:
                 await message.channel.send("Don't ping me! >:(")
         return
@@ -79,6 +78,9 @@ Let's save the pings for other people or announcements, not your random bullshit
     meme_phrases = ['me a meme', 'me a funny meme', 'me something from your meme collection']
     asked_for_meme = any(phrase in message_content_lower for phrase in meme_phrases)
 
+    poll_phrases = ['make a poll', 'create a poll', 'start a poll']
+    asked_for_poll = any(phrase in message_content_lower for phrase in poll_phrases)
+
     if bot_addressed and not bot_muted:
         if '!help' in message_content_lower or 'what do you do' in message_content_lower or 'what can you do' in message_content_lower:
             help_message = """
@@ -88,6 +90,7 @@ Let's save the pings for other people or announcements, not your random bullshit
             - Ask me to "tell me a joke" or similar to hear a joke.
             - Ask me to "show me a meme" or similar to see something from my meme collection.
             - Please don't ping me, or I'll get mad!
+            - Ask me to "make a poll" or similar to create a poll with several choices.
             """
             await message.channel.send(help_message)
         elif asked_for_joke:
@@ -162,6 +165,40 @@ Let's save the pings for other people or announcements, not your random bullshit
             except Exception as e:
                 print('Error fetching meme:', e)
                 await message.channel.send("Dafuq, why isn't it sending?")
+        elif asked_for_poll:
+            # Extract the poll question and options from the message content
+            poll_content = message.content.lower().split("make a poll", 1)[1].strip()
+            if not poll_content:
+                await message.channel.send("Please provide the poll question and options in the format: 'matsuda, make a poll: Question | Option1 | Option2 | Option3 ...'")
+                return
+
+            try:
+                poll_parts = poll_content.split('|')
+                poll_question = poll_parts[0].strip()
+                poll_options = [option.strip() for option in poll_parts[1:]]
+                
+                if len(poll_options) < 2:
+                    await message.channel.send("You need to provide at least two options for the poll.")
+                    return
+
+                if len(poll_options) > 10:
+                    await message.channel.send("You can provide a maximum of 10 options for the poll.")
+                    return
+
+                # Send the poll message
+                poll_message = f"**{poll_question}**\n"
+                emoji_list = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟']
+                for i, option in enumerate(poll_options):
+                    poll_message += f"{emoji_list[i]} {option}\n"
+
+                poll_msg = await message.channel.send(poll_message)
+
+                # Add reactions for voting
+                for i in range(len(poll_options)):
+                    await poll_msg.add_reaction(emoji_list[i])
+            except Exception as e:
+                print('Error creating poll:', e)
+                await message.channel.send("Ah frick, I can't make a poll right now. Sorry...")
         else:
             await message.channel.send('Someone say my name?')
 
