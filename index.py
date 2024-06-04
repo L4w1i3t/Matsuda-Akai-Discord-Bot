@@ -7,7 +7,6 @@ import random
 import json
 from dotenv import load_dotenv
 
-# Load environment variables
 load_dotenv()
 
 bot = commands.Bot(command_prefix='!', intents=discord.Intents.all())
@@ -18,7 +17,7 @@ with open('meme_texts.json', 'r') as file:
 
 # List to keep track of recent pings
 recent_pings = []
-bot_muted = False  # New flag to track mute status
+bot_muted = False
 
 @bot.event
 async def on_ready():
@@ -75,13 +74,17 @@ Let's save the pings for other people or announcements, not your random bullshit
     joke_phrases = ['tell me a joke', 'give me a joke', 'i want to hear a joke', 'joke please', 'another joke', 'gimme a joke', 'joke, please']
     asked_for_joke = any(phrase in message_content_lower for phrase in joke_phrases)
 
-    meme_phrases = ['me a meme', 'me a funny meme', 'me something from your meme collection']
+    meme_phrases = ['me a meme', 'me a funny meme', 'me something from your meme collection', 'send a meme', 'show a meme', 'give a meme']
     asked_for_meme = any(phrase in message_content_lower for phrase in meme_phrases)
 
     poll_phrases = ['make a poll', 'create a poll', 'start a poll']
     asked_for_poll = any(phrase in message_content_lower for phrase in poll_phrases)
 
+    night_phrases = ['good night', 'goodnight', 'nighty night']
+    told_goodnight = any(phrase in message_content_lower for phrase in night_phrases)
+
     if bot_addressed and not bot_muted:
+        
         if '!help' in message_content_lower or 'what do you do' in message_content_lower or 'what can you do' in message_content_lower:
             help_message = """
             Here are the things I can do so far:
@@ -93,6 +96,7 @@ Let's save the pings for other people or announcements, not your random bullshit
             - Ask me to "make a poll" or similar to create a poll with several choices.
             """
             await message.channel.send(help_message)
+
         elif asked_for_joke:
             # 1% chance to ping a random member
             if random.random() < 0.01:
@@ -111,6 +115,7 @@ Let's save the pings for other people or announcements, not your random bullshit
                 except Exception as e:
                     print('Error fetching joke:', e)
                     await message.channel.send("I'm sorry, I can't think of any good jokes right now...")
+
         elif asked_for_day_of_week:
             current_day = datetime.now().strftime('%A')
             responses = {
@@ -124,6 +129,7 @@ Let's save the pings for other people or announcements, not your random bullshit
             }
             response = responses.get(current_day, f'Today is {current_day}.')
             await message.channel.send(response)
+
         elif asked_for_meme:
             try:
                 username = os.getenv('IMGFLIP_USERNAME')
@@ -165,6 +171,7 @@ Let's save the pings for other people or announcements, not your random bullshit
             except Exception as e:
                 print('Error fetching meme:', e)
                 await message.channel.send("Dafuq, why isn't it sending?")
+
         elif asked_for_poll:
             # Extract the poll question and options from the message content
             poll_content = message.content.lower().split("make a poll", 1)[1].strip()
@@ -199,8 +206,10 @@ Let's save the pings for other people or announcements, not your random bullshit
             except Exception as e:
                 print('Error creating poll:', e)
                 await message.channel.send("Ah frick, I can't make a poll right now. Sorry...")
+        elif told_goodnight:
+            await message.channel.send("Nighty night!")
         else:
             await message.channel.send('Someone say my name?')
 
-# Load the token from the environment variables
+# Load the token from env
 bot.run(os.getenv('DISCORD_TOKEN'))
