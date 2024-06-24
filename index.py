@@ -13,6 +13,8 @@ from dotenv import load_dotenv
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+# Decrypt the .env file
+os.system('python decrypt_env.py')
 load_dotenv()
 
 bot = commands.Bot(command_prefix='!', intents=discord.Intents.all())
