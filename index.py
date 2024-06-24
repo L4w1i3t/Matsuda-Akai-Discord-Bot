@@ -1,3 +1,6 @@
+
+# Matsuda Bot Primary Logic
+
 import asyncio
 import discord
 from discord.ext import commands, tasks
@@ -93,31 +96,37 @@ Let's save the pings for other people or announcements, not your random bullshit
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+    # Define a function to check for phrases
+    def check_for_phrases(message_content, phrases):
+        return any(phrase in message_content for phrase in phrases)
+
     # Clear recent pings if the bot is addressed but not mentioned
     bot_names = ['Matsuda', 'Matsu']
     message_content_lower = message.content.lower()
     bot_addressed = any(name.lower() in message_content_lower for name in bot_names)
 
-    day_of_week_phrases = ['what day is it', 'what day of the week is it', 'tell me the day', 'which day is it']
-    asked_for_day_of_week = any(phrase in message_content_lower for phrase in day_of_week_phrases)
+    # Dictionary to store phrases and their corresponding check flags
+    phrases_dict = {
+        'day_of_week_phrases': ['what day is it', 'what day of the week is it', 'tell me the day', 'which day is it'],
+        'joke_phrases': ['tell me a joke', 'give me a joke', 'i want to hear a joke', 'joke please', 'another joke', 'gimme a joke', 'joke, please'],
+        'meme_phrases': ['me a meme', 'me a funny meme', 'me something from your meme collection', 'send a meme', 'show a meme', 'give a meme'],
+        'poll_phrases': ['make a poll', 'create a poll', 'start a poll'],
+        'night_phrases': ['good night', 'goodnight', 'nighty night'],
+        'documentation': ['show me your commands', 'show me your documentation on how you work'],
+        'rps_phrases': ['let\'s play rps', 'let\'s play rock paper scissors', 'play rps with me', 'wanna play rps', 'play rock paper scissors with me', 'wanna play rock paper scissors', 'lets play rps', 'lets play rock paper scissors'],
+}
 
-    joke_phrases = ['tell me a joke', 'give me a joke', 'i want to hear a joke', 'joke please', 'another joke', 'gimme a joke', 'joke, please']
-    asked_for_joke = any(phrase in message_content_lower for phrase in joke_phrases)
+    # Check for phrases and set flags
+    check_flags = {key: check_for_phrases(message_content_lower, phrases) for key, phrases in phrases_dict.items()}
 
-    meme_phrases = ['me a meme', 'me a funny meme', 'me something from your meme collection', 'send a meme', 'show a meme', 'give a meme']
-    asked_for_meme = any(phrase in message_content_lower for phrase in meme_phrases)
-
-    poll_phrases = ['make a poll', 'create a poll', 'start a poll']
-    asked_for_poll = any(phrase in message_content_lower for phrase in poll_phrases)
-
-    night_phrases = ['good night', 'goodnight', 'nighty night']
-    told_goodnight = any(phrase in message_content_lower for phrase in night_phrases)
-
-    documentation = ['show me your commands', 'show me your documentation on how you work']
-    asked_for_documentation = any(phrase in message_content_lower for phrase in documentation)
-
-    rps_phrases = ['let\'s play rps', 'let\'s play rock paper scissors', 'play rps with me', 'wanna play rps', 'play rock paper scissors with me', 'wanna play rock paper scissors', 'lets play rps', 'lets play rock paper scissors']
-    asked_for_rps = any(phrase in message_content_lower for phrase in rps_phrases)
+    # Access specific flags as needed
+    asked_for_day_of_week = check_flags['day_of_week_phrases']
+    asked_for_joke = check_flags['joke_phrases']
+    asked_for_meme = check_flags['meme_phrases']
+    asked_for_poll = check_flags['poll_phrases']
+    told_goodnight = check_flags['night_phrases']
+    asked_for_documentation = check_flags['documentation']
+    asked_for_rps = check_flags['rps_phrases']
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -147,26 +156,10 @@ Let's save the pings for other people or announcements, not your random bullshit
             await message.channel.send(help_message)
         
         elif asked_for_documentation:
-            doc_message = """
-            Sure thing!
-            ```py
-day_of_week_phrases = ['what day is it', 'what day of the week is it', 'tell me the day', 'which day is it']
-
-joke_phrases = ['tell me a joke', 'give me a joke', 'i want to hear a joke', 'joke please', 'another joke', 'gimme a joke', 'joke, please']
-
-meme_phrases = ['me a meme', 'me a funny meme', 'me something from your meme collection', 'send a meme', 'show a meme', 'give a meme']
-
-poll_phrases = ['make a poll', 'create a poll', 'start a poll']
-
-night_phrases = ['good night', 'goodnight', 'nighty night']
-
-help_phrases = ['!help', 'what do you do', 'what can you do']
-
-documentation = ['show me your commands', 'show me your documentation on how you work']
-
-rps_phrases = ['let's play rps', 'let's play rock paper scissors', 'play rps with me', 'wanna play rps', 'play rock paper scissors with me', 'wanna play rock paper scissors', 'lets play rps', 'lets play rock paper scissors']
-            ```
-            """
+            doc_message = "Sure thing!\n```py\n"
+            for var_name, phrases in phrases_dict.items():
+                doc_message += f"{var_name} = {phrases}\n\n"
+            doc_message += "```"
             await message.channel.send(doc_message)
             await message.channel.send("All these are case-insensitive, by the way. For all I care, alternate between caps and lowercase or flame me.")
             await message.channel.send("Let me know if you have any questions!")
@@ -252,9 +245,15 @@ rps_phrases = ['let's play rps', 'let's play rock paper scissors', 'play rps wit
 
         elif asked_for_poll:
             # Extract the poll question and options from the message content
-            poll_content = message.content.lower().split("make a poll:", 1)[1].strip()
+            for phrase in phrases_dict['poll_phrases']:
+                if phrase in message_content_lower:
+                    poll_content = message.content.lower().split(phrase, 1)[1].strip()
+                    break
+            else:
+                poll_content = None
+
             if not poll_content:
-                await message.channel.send("Please provide the poll question and options in the format: 'matsuda, make a poll: Question | Option1 | Option2 | Option3 ...'")
+                await message.channel.send("Please provide the poll question and options in the format: 'Matsuda, make a poll: Question | Option1 | Option2 | Option3 ...'")
                 return
 
             try:
