@@ -1,3 +1,5 @@
 # Ignore environment variable files
 .env
 .env.decrypted
+.env.enc
+secret.key
