@@ -10,6 +10,7 @@ import os
 import random
 import json
 from dotenv import load_dotenv
+import re
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -111,24 +112,33 @@ Let's save the pings for other people or announcements, not your random bullshit
     phrases_dict = {
         'day_of_week_phrases': ['what day is it', 'what day of the week is it', 'tell me the day', 'which day is it'],
         'joke_phrases': ['tell me a joke', 'give me a joke', 'i want to hear a joke', 'joke please', 'another joke', 'gimme a joke', 'joke, please'],
-        'meme_phrases': ['me a meme', 'me a funny meme', 'me something from your meme collection', 'send a meme', 'show a meme', 'give a meme'],
+        'meme_phrases': ['me a meme', 'me a funny meme', 'me something from your meme collection', 'send a meme', 'show a meme', 'give a meme', 'another meme'],
         'poll_phrases': ['make a poll', 'create a poll', 'start a poll'],
-        'night_phrases': ['good night', 'goodnight', 'nighty night'],
         'documentation': ['show me your commands', 'show me your documentation on how you work'],
         'rps_phrases': ['let\'s play rps', 'let\'s play rock paper scissors', 'play rps with me', 'wanna play rps', 'play rock paper scissors with me', 'wanna play rock paper scissors', 'lets play rps', 'lets play rock paper scissors'],
-}
-
+    }
+    admin_dict = {
+        'announcements': ['make an announcement', 'make an announcement:']
+    }
+    convo_dict = {
+        'night_phrases': ['good night', 'goodnight', 'nighty night']
+    }
     # Check for phrases and set flags
     check_flags = {key: check_for_phrases(message_content_lower, phrases) for key, phrases in phrases_dict.items()}
+    check_admin_flags = {key: check_for_phrases(message_content_lower, phrases) for key, phrases in admin_dict.items()}
+    check_convo_flags = {key: check_for_phrases(message_content_lower, phrases) for key, phrases in convo_dict.items()}
 
     # Access specific flags as needed
     asked_for_day_of_week = check_flags['day_of_week_phrases']
     asked_for_joke = check_flags['joke_phrases']
     asked_for_meme = check_flags['meme_phrases']
     asked_for_poll = check_flags['poll_phrases']
-    told_goodnight = check_flags['night_phrases']
+    told_goodnight = check_convo_flags['night_phrases']
     asked_for_documentation = check_flags['documentation']
     asked_for_rps = check_flags['rps_phrases']
+
+    # Admin flags
+    asked_for_announcement = check_admin_flags['announcements']
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -246,45 +256,40 @@ Let's save the pings for other people or announcements, not your random bullshit
 
 
         elif asked_for_poll:
-            # Extract the poll question and options from the message content
-            for phrase in phrases_dict['poll_phrases']:
-                if phrase in message_content_lower:
-                    poll_content = message.content.lower().split(phrase, 1)[1].strip()
-                    break
+            # Use a regular expression to match "make a poll" followed by optional colon and extract the poll content
+            match = re.search(r'make a poll:?\s*(.*)', message.content, re.IGNORECASE | re.DOTALL)
+            if match:
+                poll_content = match.group(1).strip()
+
+                try:
+                    poll_parts = poll_content.split('|')
+                    poll_question = poll_parts[0].strip()
+                    poll_options = [option.strip() for option in poll_parts[1:]]
+
+                    if len(poll_options) < 2:
+                        await message.channel.send("Please provide the poll question and options in the format: 'Matsuda, make a poll: Question | Option1 | Option2 | Option3 ...'")
+                        return
+
+                    if len(poll_options) > 10:
+                        await message.channel.send("Sorry, You can provide a maximum of 10 options for the poll!")
+                        return
+
+                    # Send the poll message
+                    poll_message = f"**{poll_question}**\n"
+                    emoji_list = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟']
+                    for i, option in enumerate(poll_options):
+                        poll_message += f"{emoji_list[i]} {option}\n"
+
+                    poll_msg = await message.channel.send(poll_message)
+
+                    # Add reactions for voting
+                    for i in range(len(poll_options)):
+                        await poll_msg.add_reaction(emoji_list[i])
+                except Exception as e:
+                    print('Error creating poll:', e)
+                    await message.channel.send("Ah frick, I can't make a poll right now. Sorry...")
             else:
-                poll_content = None
-
-            if not poll_content:
                 await message.channel.send("Please provide the poll question and options in the format: 'Matsuda, make a poll: Question | Option1 | Option2 | Option3 ...'")
-                return
-
-            try:
-                poll_parts = poll_content.split('|')
-                poll_question = poll_parts[0].strip()
-                poll_options = [option.strip() for option in poll_parts[1:]]
-                
-                if len(poll_options) < 2:
-                    await message.channel.send("You need to provide at least two options for the poll.")
-                    return
-
-                if len(poll_options) > 10:
-                    await message.channel.send("You can provide a maximum of 10 options for the poll.")
-                    return
-
-                # Send the poll message
-                poll_message = f"**{poll_question}**\n"
-                emoji_list = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟']
-                for i, option in enumerate(poll_options):
-                    poll_message += f"{emoji_list[i]} {option}\n"
-
-                poll_msg = await message.channel.send(poll_message)
-
-                # Add reactions for voting
-                for i in range(len(poll_options)):
-                    await poll_msg.add_reaction(emoji_list[i])
-            except Exception as e:
-                print('Error creating poll:', e)
-                await message.channel.send("Ah frick, I can't make a poll right now. Sorry...")
 
 
         # Rock, paper, scissors
@@ -306,10 +311,29 @@ Let's save the pings for other people or announcements, not your random bullshit
                 await message.channel.send("Ah, we tied...")
             else:
                 await message.channel.send("HA, REKT, GG EZ + I'M JUST BETTER")
-
                 
         elif told_goodnight:
             await message.channel.send("Nighty night!")
+
+        #------------------------------------ADMIN ONLY
+        elif asked_for_announcement:
+            if message.author.guild_permissions.administrator:
+                # Use a regular expression to match "make an announcement" followed by optional colon and extract the announcement text
+                match = re.search(r'make an announcement:?\s*(.*)', message.content, re.IGNORECASE | re.DOTALL)
+                if match:
+                    announcement = match.group(1).strip()
+                    announcements_channel = discord.utils.get(message.guild.text_channels, name='announcements')
+                    if announcements_channel:
+                        await announcements_channel.send(f"📢 @everyone\n**ANNOUNCEMENT:**\n\n{announcement}")
+                        await message.channel.send("Done!")
+                    else:
+                        await message.channel.send("Couldn't find an #announcements channel. Please create one and try again.")
+                else:
+                    await message.channel.send("Please provide the announcement content.")
+            else:
+                await message.channel.send("You do not have permission to make announcements.")
+        #------------------------------------
+
         else:
             recent_pings.clear()
             bot_muted = False  # Unmute the bot when it is addressed without a ping
