@@ -116,6 +116,7 @@ Let's save the pings for other people or announcements, not your random bullshit
         'poll_phrases': ['make a poll', 'create a poll', 'start a poll'],
         'documentation': ['show me your commands', 'show me your documentation on how you work'],
         'rps_phrases': ['let\'s play rps', 'let\'s play rock paper scissors', 'play rps with me', 'wanna play rps', 'play rock paper scissors with me', 'wanna play rock paper scissors', 'lets play rps', 'lets play rock paper scissors'],
+        'tic-tac-toe': ['let\'s play tic tac toe', 'let\'s play tictactoe', 'lets play tic tac toe', 'lets play tictactoe', 'let\'s play ttt', 'lets play ttt', 'play tic tac toe with me', 'play tictactoe with me', 'play ttt with me']
     }
     admin_dict = {
         'announcements': ['make an announcement', 'make an announcement:']
@@ -136,6 +137,7 @@ Let's save the pings for other people or announcements, not your random bullshit
     told_goodnight = check_convo_flags['night_phrases']
     asked_for_documentation = check_flags['documentation']
     asked_for_rps = check_flags['rps_phrases']
+    asked_for_ttt = check_flags['tic-tac-toe']
 
     # Admin flags
     asked_for_announcement = check_admin_flags['announcements']
@@ -160,7 +162,7 @@ Let's save the pings for other people or announcements, not your random bullshit
 
 - Ask me to "make a poll" or similar to create a poll with several choices.
 
-- "Play RPS (Rock, paper, scissors) with me!"
+- "Wanna play a game? I got Rock Paper Scissors and Tic Tac Toe!"
 
 - Please don't ping me, or I'll get mad!
             ```
@@ -311,6 +313,84 @@ Let's save the pings for other people or announcements, not your random bullshit
                 await message.channel.send("Ah, we tied...")
             else:
                 await message.channel.send("HA, REKT, GG EZ + I'M JUST BETTER")
+
+        
+        # Tic Tac Toe
+        elif asked_for_ttt:
+            await message.channel.send("Sure, let's do that! Type your move as a grid position (e.g., '1 1' for top left, '3 3' for bottom right).")
+            await message.channel.send("Wanna be X or O?")
+
+            def check_player_choice(msg):
+                return msg.author == message.author and msg.channel == msg.channel and msg.content.upper() in ['X', 'O']
+
+            try:
+                player_choice_msg = await bot.wait_for('message', timeout=30.0, check=check_player_choice)
+                player_choice = player_choice_msg.content.upper()
+            except asyncio.TimeoutError:
+                await message.channel.send("You didn't choose a side. If you don't wanna play anymore, that's fine. Just ask me again when you wanna play!")
+                return
+
+            player = player_choice
+            bot_player = 'O' if player == 'X' else 'X'
+            board = [[' ' for _ in range(3)] for _ in range(3)]
+            moves_made = 0
+
+            def print_board():
+                board_display = ""
+                for i, row in enumerate(board):
+                    board_display += "|".join([f" {cell} " for cell in row]) + "\n"
+                    if i < 2:  # Only add separator for the first two rows
+                        board_display += "---|---|---\n"
+                return board_display
+
+            def check_winner():
+                # Check rows, columns, and diagonals
+                for i in range(3):
+                    if board[i][0] == board[i][1] == board[i][2] != ' ' or board[0][i] == board[1][i] == board[2][i] != ' ':
+                        return True
+                if board[0][0] == board[1][1] == board[2][2] != ' ' or board[0][2] == board[1][1] == board[2][0] != ' ':
+                    return True
+                return False
+
+            await message.channel.send(f"Current board:\n```\n{print_board()}\n```")
+
+            while moves_made < 9:
+                if player == 'X' and moves_made % 2 == 0 or player == 'O' and moves_made % 2 != 0:
+                    def check_move(msg):
+                        return msg.author == message.author and msg.channel == msg.channel and re.match(r'^[1-3] [1-3]$', msg.content)
+
+                    try:
+                        move = await bot.wait_for('message', timeout=30.0, check=check_move)
+                        x, y = map(int, move.content.split())
+                        x -= 1
+                        y -= 1
+
+                        if board[x][y] != ' ':
+                            await message.channel.send("There's already something there, dingus.")
+                            continue
+
+                        board[x][y] = player
+                    except asyncio.TimeoutError:
+                        await message.channel.send("Timeout! No move made.")
+                        break
+                else:
+                    # Bot's move
+                    empty_positions = [(i, j) for i in range(3) for j in range(3) if board[i][j] == ' ']
+                    x, y = random.choice(empty_positions)
+                    board[x][y] = bot_player
+
+                moves_made += 1
+
+                if check_winner():
+                    await message.channel.send(f"Current board:\n```\n{print_board()}\n```")
+                    await message.channel.send(f"Player {'X' if moves_made % 2 == 1 else 'O'} wins!")
+                    break
+
+                await message.channel.send(f"Current board:\n```\n{print_board()}\n```")
+            else:
+                await message.channel.send(f"Current board:\n```\n{print_board()}\n```")
+                await message.channel.send("It's a draw!")
+
                 
         elif told_goodnight:
             await message.channel.send("Nighty night!")
