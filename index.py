@@ -1,6 +1,3 @@
-
-# Matsuda Bot Primary Logic
-
 import asyncio
 import discord
 from discord.ext import commands, tasks
@@ -11,8 +8,8 @@ import random
 import json
 from dotenv import load_dotenv
 import re
-
-#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+import numpy as np
+import pickle
 
 # Decrypt the .env file
 os.system('python decrypt_env.py')
@@ -31,19 +28,119 @@ bot_muted = False
 # Cooldown tracking
 cooldown_end_time = None
 
+# Q-learning parameters
+Q_table = {}
+learning_rate = 0.1
+discount_factor = 0.9
+exploration_rate = 1.0
+exploration_decay = 0.995
+min_exploration_rate = 0.01
+
+# Save and load Q-table
+Q_table_file = 'Q_table.pkl'
+
+def save_Q_table():
+    with open(Q_table_file, 'wb') as file:
+        pickle.dump(Q_table, file)
+
+def load_Q_table():
+    global Q_table
+    if os.path.exists(Q_table_file):
+        with open(Q_table_file, 'rb') as file:
+            Q_table = pickle.load(file)
+
+load_Q_table()
+
+def minimax(board, depth, is_maximizing, alpha, beta, bot_player, player):
+    def evaluate(board):
+        for row in board:
+            if row[0] == row[1] == row[2] != ' ':
+                return 1 if row[0] == bot_player else -1
+        for col in range(3):
+            if board[0][col] == board[1][col] == board[2][col] != ' ':
+                return 1 if board[0][col] == bot_player else -1
+        if board[0][0] == board[1][1] == board[2][2] != ' ':
+            return 1 if board[0][0] == bot_player else -1
+        if board[0][2] == board[1][1] == board[2][0] != ' ':
+            return 1 if board[0][2] == bot_player else -1
+        return 0
+
+    def is_moves_left(board):
+        for row in board:
+            if ' ' in row:
+                return True
+        return False
+
+    score = evaluate(board)
+    if score == 1:
+        return score
+    if score == -1:
+        return score
+    if not is_moves_left(board):
+        return 0
+
+    if is_maximizing:
+        best = -float('inf')
+        for i in range(3):
+            for j in range(3):
+                if board[i][j] == ' ':
+                    board[i][j] = bot_player
+                    best = max(best, minimax(board, depth + 1, not is_maximizing, alpha, beta, bot_player, player))
+                    board[i][j] = ' '
+                    alpha = max(alpha, best)
+                    if beta <= alpha:
+                        break
+        return best
+    else:
+        best = float('inf')
+        for i in range(3):
+            for j in range(3):
+                if board[i][j] == ' ':
+                    board[i][j] = player
+                    best = min(best, minimax(board, depth + 1, not is_maximizing, alpha, beta, bot_player, player))
+                    board[i][j] = ' '
+                    beta = min(beta, best)
+                    if beta <= alpha:
+                        break
+        return best
+
+def find_best_move(board, bot_player, player):
+    best_val = -float('inf')
+    best_move = (-1, -1)
+    for i in range(3):
+        for j in range(3):
+            if board[i][j] == ' ':
+                board[i][j] = bot_player
+                move_val = minimax(board, 0, False, -float('inf'), float('inf'), bot_player, player)
+                board[i][j] = ' '
+                if move_val > best_val:
+                    best_move = (i, j)
+                    best_val = move_val
+    return best_move
+
 @bot.event
 async def on_ready():
     print('MATSUDA IS ONLINE!')
 
-#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 @bot.event
 async def on_message(message):
-    global bot_muted, cooldown_end_time
+    global bot_muted, cooldown_end_time, exploration_rate
+
+    state = None
+    action = None
+    reward = 0
 
     # Check if the message is from a bot, if so, ignore it
     if message.author.bot:
         return
+
+    # Find the "clown" role case insensitively for both "clown" and "Clown"
+    clown_role = next((role for role in message.guild.roles if role.name.lower() == "clown"), None)
+    if clown_role and clown_role in message.author.roles:
+        if any(mention in message.content for mention in ['@everyone', '@here']) or message.mentions:
+            await message.delete()
+            await message.channel.send(f"{message.author.mention} ***SHUT.***")
+            return
 
     # Check if the bot is mentioned
     bot_mentioned = bot.user in message.mentions
@@ -97,8 +194,6 @@ Let's save the pings for other people or announcements, not your random bullshit
                 await message.channel.send("Don't ping me! >:(")
         return
 
-#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
     # Define a function to check for phrases
     def check_for_phrases(message_content, phrases):
         return any(phrase in message_content for phrase in phrases)
@@ -142,8 +237,6 @@ Let's save the pings for other people or announcements, not your random bullshit
     # Admin flags
     asked_for_announcement = check_admin_flags['announcements']
 
-#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
     if bot_addressed and not bot_muted:
         
         if '!help' in message_content_lower or 'what do you do' in message_content_lower or 'what can you do' in message_content_lower:
@@ -178,7 +271,6 @@ Let's save the pings for other people or announcements, not your random bullshit
             await message.channel.send("All these are case-insensitive, by the way. For all I care, alternate between caps and lowercase or flame me.")
             await message.channel.send("Let me know if you have any questions!")
 
-
         elif asked_for_joke:
             # 1% chance to ping a random member
             if random.random() < 0.01:
@@ -198,7 +290,6 @@ Let's save the pings for other people or announcements, not your random bullshit
                     print('Error fetching joke:', e)
                     await message.channel.send("I'm sorry, I can't think of any good jokes right now...")
 
-
         elif asked_for_day_of_week:
             current_day = datetime.now().strftime('%A')
             responses = {
@@ -212,7 +303,6 @@ Let's save the pings for other people or announcements, not your random bullshit
             }
             response = responses.get(current_day, f'Today is {current_day}.')
             await message.channel.send(response)
-
 
         elif asked_for_meme:
             try:
@@ -256,9 +346,8 @@ Let's save the pings for other people or announcements, not your random bullshit
                 print('Error fetching meme:', e)
                 await message.channel.send("Dafuq, why isn't it sending?")
 
-
         elif asked_for_poll:
-            # Use a regular expression to match "make a poll" followed by optional colon and extract the poll content
+            # Use a regular expression to match "make a poll"
             match = re.search(r'make a poll:?\s*(.*)', message.content, re.IGNORECASE | re.DOTALL)
             if match:
                 poll_content = match.group(1).strip()
@@ -293,12 +382,11 @@ Let's save the pings for other people or announcements, not your random bullshit
             else:
                 await message.channel.send("Please provide the poll question and options in the format: 'Matsuda, make a poll: Question | Option1 | Option2 | Option3 ...'")
 
-
         # Rock, paper, scissors
         elif asked_for_rps:
             await message.channel.send("Sure thing! After this message, just type one of the three! Rock, paper, scissors...")
             def check(msg):
-                return msg.author == message.author and msg.channel == message.channel and msg.content.lower() in ['rock', 'paper', 'scissors']
+                return msg.author == message.author and msg.channel == msg.channel and msg.content.lower() in ['rock', 'paper', 'scissors']
             try:
                 user_choice = await bot.wait_for('message', timeout=30.0, check=check)
                 user_choice = user_choice.content.lower()
@@ -314,7 +402,6 @@ Let's save the pings for other people or announcements, not your random bullshit
             else:
                 await message.channel.send("HA, REKT, GG EZ + I'M JUST BETTER")
 
-        
         # Tic Tac Toe
         elif asked_for_ttt:
             await message.channel.send("Sure, let's do that! Type your move as a grid position (e.g., '1 1' for top left, '3 3' for bottom right).")
@@ -332,8 +419,23 @@ Let's save the pings for other people or announcements, not your random bullshit
 
             player = player_choice
             bot_player = 'O' if player == 'X' else 'X'
+
+            await message.channel.send("Want me to be gentle, be fair, or kick your ass? (Choose difficulty: Easy, Normal, Lunatic)")
+
+            def check_difficulty_choice(msg):
+                return msg.author == message.author and msg.channel == msg.channel and msg.content.lower() in ['easy', 'normal', 'lunatic']
+
+            try:
+                difficulty_choice_msg = await bot.wait_for('message', timeout=30.0, check=check_difficulty_choice)
+                difficulty = difficulty_choice_msg.content.lower()
+            except asyncio.TimeoutError:
+                await message.channel.send("You didn't choose a difficulty. If you don't wanna play anymore, that's fine. Just ask me again when you wanna play!")
+                return
+
             board = [[' ' for _ in range(3)] for _ in range(3)]
             moves_made = 0
+            game_over = False
+            state_action_pairs = []
 
             def print_board():
                 board_display = ""
@@ -352,9 +454,33 @@ Let's save the pings for other people or announcements, not your random bullshit
                     return True
                 return False
 
+            def get_state(board):
+                return ''.join([''.join(row) for row in board])
+
+            def choose_action(state, possible_actions):
+                if state not in Q_table:
+                    Q_table[state] = np.zeros(len(possible_actions))
+
+                if random.uniform(0, 1) < exploration_rate:
+                    return random.choice(possible_actions)
+                else:
+                    return possible_actions[np.argmax(Q_table[state])]
+
+            def update_Q_table(state, action, reward, next_state, done):
+                if state not in Q_table:
+                    Q_table[state] = np.zeros(9)
+
+                if next_state not in Q_table:
+                    Q_table[next_state] = np.zeros(9)
+
+                best_next_action = np.argmax(Q_table[next_state])
+                td_target = reward + discount_factor * Q_table[next_state][best_next_action] * (1 - done)
+                td_error = td_target - Q_table[state][action]
+                Q_table[state][action] += learning_rate * td_error
+
             await message.channel.send(f"Current board:\n```\n{print_board()}\n```")
 
-            while moves_made < 9:
+            while moves_made < 9 and not game_over:
                 if player == 'X' and moves_made % 2 == 0 or player == 'O' and moves_made % 2 != 0:
                     def check_move(msg):
                         return msg.author == message.author and msg.channel == msg.channel and re.match(r'^[1-3] [1-3]$', msg.content)
@@ -370,35 +496,55 @@ Let's save the pings for other people or announcements, not your random bullshit
                             continue
 
                         board[x][y] = player
+                        state = get_state(board)
+                        action = (x, y)
+                        state_action_pairs.append((state, action))
                     except asyncio.TimeoutError:
                         await message.channel.send("Timeout! No move made.")
                         break
                 else:
-                    # Bot's move
-                    empty_positions = [(i, j) for i in range(3) for j in range(3) if board[i][j] == ' ']
-                    x, y = random.choice(empty_positions)
+                    state = get_state(board)
+                    if difficulty == 'easy':
+                        action = random.choice([(i, j) for i in range(3) for j in range(3) if board[i][j] == ' '])
+                    elif difficulty == 'normal':
+                        empty_positions = [(i, j) for i in range(3) for j in range(3) if board[i][j] == ' ']
+                        action = choose_action(state, empty_positions)
+                    elif difficulty == 'lunatic':
+                        action = find_best_move(board, bot_player, player)
+                    x, y = action
                     board[x][y] = bot_player
+                    state_action_pairs.append((state, (x, y)))
 
                 moves_made += 1
 
                 if check_winner():
+                    game_over = True
                     await message.channel.send(f"Current board:\n```\n{print_board()}\n```")
                     await message.channel.send(f"Player {'X' if moves_made % 2 == 1 else 'O'} wins!")
-                    break
+                    reward = 1 if (moves_made % 2 == 1) else -1
+                else:
+                    await message.channel.send(f"Current board:\n```\n{print_board()}\n```")
+                    reward = 0
 
-                await message.channel.send(f"Current board:\n```\n{print_board()}\n```")
-            else:
-                await message.channel.send(f"Current board:\n```\n{print_board()}\n```")
-                await message.channel.send("It's a draw!")
+                if moves_made == 9 and not game_over:
+                    game_over = True
+                    await message.channel.send(f"Current board:\n```\n{print_board()}\n```")
+                    await message.channel.send("It's a draw!")
+                    reward = 0.5
 
-                
+                next_state = get_state(board)
+                update_Q_table(state, action[0] * 3 + action[1], reward, next_state, game_over)
+
+            exploration_rate = max(min_exploration_rate, exploration_rate * exploration_decay)
+            save_Q_table()
+
         elif told_goodnight:
             await message.channel.send("Nighty night!")
 
         #------------------------------------ADMIN ONLY
         elif asked_for_announcement:
             if message.author.guild_permissions.administrator:
-                # Use a regular expression to match "make an announcement" followed by optional colon and extract the announcement text
+                # Use a regular expression to match "make an announcement"
                 match = re.search(r'make an announcement:?\s*(.*)', message.content, re.IGNORECASE | re.DOTALL)
                 if match:
                     announcement = match.group(1).strip()
@@ -422,8 +568,6 @@ Let's save the pings for other people or announcements, not your random bullshit
                 await message.channel.send('Someone say my name?')
                 cooldown_end_time = current_time + timedelta(minutes=15)
             return
-
-#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Load the token from env
 bot.run(os.getenv('DISCORD_TOKEN'))
