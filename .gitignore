@@ -3,3 +3,4 @@
 .env.decrypted
 .env.enc
 secret.key
+Q_table.pkl
