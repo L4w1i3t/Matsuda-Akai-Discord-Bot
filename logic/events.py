@@ -6,9 +6,10 @@ import random
 from datetime import datetime, timedelta
 
 from logic.helper import load_Q_table, save_Q_table
-from logic.minimax import find_best_move
-from logic.qlearn import choose_action, update_Q_table, get_state
-from logic.activities import dayoftheweek, jokes, memes, poll, rps, ttt, documentation
+from logic.activities.tictactoe.minimax import find_best_move
+from logic.activities.tictactoe.qlearn import choose_action, update_Q_table, get_state
+from logic.activities import dayoftheweek, jokes, memes, poll, rps, documentation
+from logic.activities.tictactoe import ttt
 from logic.conversation import goodnight
 from logic.admin import announcement
 from logic.whenping import handle_pings

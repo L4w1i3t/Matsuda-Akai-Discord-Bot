@@ -3,8 +3,8 @@ import asyncio
 import re
 import random
 
-from logic.qlearn import Q_table, update_Q_table, get_state, choose_action
-from logic.minimax import find_best_move
+from .qlearn import Q_table, update_Q_table, get_state, choose_action
+from .minimax import find_best_move
 from logic.helper import save_Q_table
 
 tic_tac_toe_phrases = ['let\'s play tic tac toe', 'let\'s play tictactoe', 'lets play tic tac toe', 'lets play tictactoe', 'let\'s play ttt', 'lets play ttt', 'play tic tac toe with me', 'play tictactoe with me', 'play ttt with me']

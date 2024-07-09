@@ -9,7 +9,7 @@ async def send_help_message(message):
     ```txt
 - Mention my name and I will respond. I won't respond if you don't say my name or are just wasting my time!
 
-- Wanna know specific commands? just say "Matsuda, show me your commands" or "Matsuda, show me your documentation on how you work".
+- Wanna know specific commands? just say "Matsuda, show me your commands" or "Matsuda, show me your documentation on how you work". [THIS IS CURRENTLY UNDER MAINTENANCE, COME BACK LATER]
 
 - Ask me "what day is it" or similar to know the current day of the week.
 
