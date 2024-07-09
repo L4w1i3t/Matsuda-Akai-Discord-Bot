@@ -1,18 +1,4 @@
-import pickle
-import os
 from cryptography.fernet import Fernet
-
-Q_table_file = 'Q_table.pkl'
-
-def save_Q_table(Q_table):
-    with open(Q_table_file, 'wb') as file:
-        pickle.dump(Q_table, file)
-
-def load_Q_table():
-    if os.path.exists(Q_table_file):
-        with open(Q_table_file, 'rb') as file:
-            return pickle.load(file)
-    return {}
 
 def decrypt_env():
     key_file = 'secret.key'
