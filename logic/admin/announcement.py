@@ -1,7 +1,10 @@
+#announcement.py
 import discord
 import re
 
-announcements_phrases = ['make an announcement', 'make an announcement:']
+announcements_phrases = [
+    'make an announcement', 'make an announcement:'
+    ]
 
 def check_phrases(message_content_lower):
     return {'announcements': any(phrase in message_content_lower for phrase in announcements_phrases)}

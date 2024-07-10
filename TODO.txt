@@ -1,0 +1,8 @@
+META:
+-Large Language Model version of the bot
+
+GAMES:
+
+SERVICES:
+
+COMMUNICATION:

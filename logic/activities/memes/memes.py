@@ -1,10 +1,13 @@
+#memes.py
 import discord
 import os
 import requests
 import random
 import json
 
-meme_phrases = ['me a meme', 'me a funny meme', 'me something from your meme collection', 'send a meme', 'show a meme', 'give a meme', 'another meme']
+meme_phrases = [
+    'me a meme', 'me a funny meme', 'me something from your meme collection', 'send a meme', 'show a meme', 'give a meme', 'another meme'
+    ]
 
 def check_phrases(message_content_lower):
     return {'meme_phrases': any(phrase in message_content_lower for phrase in meme_phrases)}

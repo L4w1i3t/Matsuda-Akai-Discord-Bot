@@ -1,3 +1,4 @@
+#minimax.py
 def minimax(board, depth, is_maximizing, alpha, beta, bot_player, player):
     def evaluate(board):
         for row in board:

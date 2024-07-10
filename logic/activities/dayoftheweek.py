@@ -1,7 +1,9 @@
 import discord
 from datetime import datetime
 
-day_of_week_phrases = ['what day is it', 'what day of the week is it', 'tell me the day', 'which day is it']
+day_of_week_phrases = [
+    'what day is it', 'what day of the week is it', 'tell me the day', 'which day is it'
+    ]
 
 def check_phrases(message_content_lower):
     return {'day_of_week_phrases': any(phrase in message_content_lower for phrase in day_of_week_phrases)}

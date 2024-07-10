@@ -1,3 +1,4 @@
+#whenping.py
 import discord
 from datetime import timedelta
 

@@ -2,7 +2,9 @@ import discord
 import requests
 import random
 
-joke_phrases = ['tell me a joke', 'give me a joke', 'i want to hear a joke', 'joke please', 'another joke', 'gimme a joke', 'joke, please']
+joke_phrases = [
+    'tell me a joke', 'give me a joke', 'i want to hear a joke', 'joke please', 'another joke', 'gimme a joke', 'joke, please'
+    ]
 
 def check_phrases(message_content_lower):
     return {'joke_phrases': any(phrase in message_content_lower for phrase in joke_phrases)}

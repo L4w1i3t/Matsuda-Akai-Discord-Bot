@@ -1,7 +1,10 @@
+#poll.py
 import discord
 import re
 
-poll_phrases = ['make a poll', 'create a poll', 'start a poll']
+poll_phrases = [
+    'make a poll', 'create a poll', 'start a poll'
+    ]
 
 def check_phrases(message_content_lower):
     return {'poll_phrases': any(phrase in message_content_lower for phrase in poll_phrases)}

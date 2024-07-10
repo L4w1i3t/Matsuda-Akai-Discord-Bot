@@ -1,8 +1,12 @@
+#rps.py
 import discord
 import asyncio
 import random
 
-rps_phrases = ['let\'s play rps', 'let\'s play rock paper scissors', 'play rps with me', 'wanna play rps', 'play rock paper scissors with me', 'wanna play rock paper scissors', 'lets play rps', 'lets play rock paper scissors']
+rps_phrases = [
+    'let\'s play rps', 'let\'s play rock paper scissors', 'play rps with me', 'wanna play rps', 
+    'play rock paper scissors with me', 'wanna play rock paper scissors', 'lets play rps', 'lets play rock paper scissors'
+    ]
 
 def check_phrases(message_content_lower):
     return {'rps_phrases': any(phrase in message_content_lower for phrase in rps_phrases)}
