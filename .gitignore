@@ -3,7 +3,13 @@
 *.env.decrypted
 *.env.enc
 secret.key
-Q_table_TTT.pkl
+
+# Ignore learning tables
+*Q_table_TTT.pkl
+
+# Ignore GitHub auto-updater
+*auto-update-minor.bat
 
 # Ignore build directories
 build/
+MatsudaAkaiBot.egg-info/
