@@ -2,9 +2,9 @@
 from cryptography.fernet import Fernet
 
 def decrypt_env():
-    key_file = 'secret.key'
-    encrypted_file = '.env.enc'
-    decrypted_file = '.env.decrypted'
+    key_file = 'package/secret.key'
+    encrypted_file = 'package/.env.enc'
+    decrypted_file = 'package/.env.decrypted'
 
     # Load the key
     with open(key_file, 'rb') as file:

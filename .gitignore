@@ -1,6 +1,9 @@
 # Ignore environment variable files
-.env
-.env.decrypted
-.env.enc
+*.env
+*.env.decrypted
+*.env.enc
 secret.key
-Q_table.pkl
+Q_table_TTT.pkl
+
+# Ignore build directories
+build/

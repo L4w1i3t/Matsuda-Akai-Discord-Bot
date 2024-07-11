@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='MatsudaAkaiBot',
-    version='1.0.0',
+    version='0.1.0',
     description='A versatile Discord bot for entertainment and assistance.',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
@@ -21,7 +21,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'matsudaakaibot = main:main',
+            'mab = package.main:main',
         ],
     },
     classifiers=[
