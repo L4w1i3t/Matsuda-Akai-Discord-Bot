@@ -2,7 +2,7 @@
 *.env
 *.env.decrypted
 *.env.enc
-secret.key
+*secret.key
 
 # Ignore learning tables
 *Q_table_TTT.pkl

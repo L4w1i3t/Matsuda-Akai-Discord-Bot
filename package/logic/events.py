@@ -6,7 +6,7 @@ import requests
 import random
 from datetime import datetime, timedelta
 
-# Import necessary logic or necessary files from their given directories.
+# Import necessary logic or necessary files from their given directories
 from logic.activities.tictactoe.minimax import find_best_move
 from logic.activities.tictactoe.qlearn import choose_action, update_Q_table, get_state, load_Q_table, save_Q_table
 from logic.activities import dayoftheweek, jokes, poll, rps, documentation, funfact
@@ -58,18 +58,15 @@ async def on_message(message, bot):
     check_poll_flags = poll.check_phrases(message_content_lower)
     check_funfact_flags = funfact.check_phrases(message_content_lower)
     check_uselessweb_flags = uselessweb.check_phrases(message_content_lower)
-
     check_rps_flags = rps.check_phrases(message_content_lower)
     check_ttt_flags = ttt.check_phrases(message_content_lower)
     check_checkers_flags = playcheckers.check_phrases(message_content_lower)
-
     check_goodnight_flags = goodnight.check_phrases(message_content_lower)
     check_hello_flags = hello.check_phrases(message_content_lower)
     check_wcrs_flags = wcrs.check_phrases(message_content_lower)
 
     check_documentation_flags = documentation.check_phrases(message_content_lower)
     check_admin_flags = announcement.check_phrases(message_content_lower)
-
 
     # Setups for conditionals below
     asked_for_day_of_week = check_flags['day_of_week_phrases']
@@ -78,11 +75,9 @@ async def on_message(message, bot):
     asked_for_poll = check_poll_flags['poll_phrases']
     asked_for_funfact = check_funfact_flags['funfact_phrases']
     asked_for_randomsite = check_uselessweb_flags['uselessweb_phrases']
-
     told_goodnight = check_goodnight_flags['night_phrases']
     told_hello = check_hello_flags['hello_phrases']
     told_wcrs = check_wcrs_flags['wcrs_phrases']
-
     asked_for_documentation = check_documentation_flags['documentation']
     asked_for_rps = check_rps_flags['rps_phrases']
     asked_for_ttt = check_ttt_flags['tic-tac-toe']
@@ -91,10 +86,14 @@ async def on_message(message, bot):
 
     if bot_addressed and not bot_muted:
         recent_pings.clear()
+    
+        # Documentation and command help
         if '!help' in message_content_lower or 'what do you do' in message_content_lower or 'what can you do' in message_content_lower:
             await documentation.send_help_message(message)
         elif asked_for_documentation:
             await documentation.send_documentation(message)
+        
+        # Activities
         elif asked_for_joke:
             await jokes.send_joke(message)
         elif asked_for_day_of_week:
@@ -113,14 +112,20 @@ async def on_message(message, bot):
             await ttt.play_ttt(message, bot)
         elif asked_for_checkers:
             await playcheckers.play_checkers(message, bot)
+        
+        # Conversational
         elif told_goodnight:
             await goodnight.send_goodnight(message)
         elif told_hello:
             await hello.send_hello(message)
         elif told_wcrs:
             await wcrs.send_wcrs(message)
+
+        # ADMIN
         elif asked_for_announcement:
             await announcement.handle_announcement(message)
+        
+        # General when her name is said
         else:
             recent_pings.clear()
             bot_muted = False
