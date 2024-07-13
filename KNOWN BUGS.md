@@ -1,3 +1,0 @@
-# List of known bugs and issues
-Pretty much the entire checkers feature
-Matsuda responding to an unrelated command or prompt whenever the user prompts something else (e.g. Matsuda saying "Hello" to the user instead of making an announcement when asked to)
