@@ -1,4 +1,3 @@
-#events.py
 import discord
 from discord.ext import commands
 import asyncio
@@ -86,54 +85,54 @@ async def on_message(message, bot):
 
     if bot_addressed and not bot_muted:
         recent_pings.clear()
-    
+
+        # Conversational
+        if told_goodnight:
+            await goodnight.send_goodnight(message)
+        if told_hello:
+            await hello.send_hello(message)
+        if told_wcrs:
+            await wcrs.send_wcrs(message)
+
         # Documentation and command help
         if '!help' in message_content_lower or 'what do you do' in message_content_lower or 'what can you do' in message_content_lower:
             await documentation.send_help_message(message)
-        elif asked_for_documentation:
+        if asked_for_documentation:
             await documentation.send_documentation(message)
-        
+
         # Activities
-        elif asked_for_joke:
+        if asked_for_joke:
             await jokes.send_joke(message)
-        elif asked_for_day_of_week:
+        if asked_for_day_of_week:
             await dayoftheweek.send_day_of_week(message)
-        elif asked_for_meme:
+        if asked_for_meme:
             await memes.send_meme(message)
-        elif asked_for_poll:
+        if asked_for_poll:
             await poll.create_poll(message)
-        elif asked_for_funfact:
+        if asked_for_funfact:
             await funfact.send_funfact(message)
-        elif asked_for_randomsite:
+        if asked_for_randomsite:
             await uselessweb.send_randomsite(message)
-        elif asked_for_rps:
+        if asked_for_rps:
             await rps.play_rps(message, bot)
-        elif asked_for_ttt:
+        if asked_for_ttt:
             await ttt.play_ttt(message, bot)
-        elif asked_for_checkers:
+        if asked_for_checkers:
             await playcheckers.play_checkers(message, bot)
-        
-        # Conversational
-        elif told_goodnight:
-            await goodnight.send_goodnight(message)
-        elif told_hello:
-            await hello.send_hello(message)
-        elif told_wcrs:
-            await wcrs.send_wcrs(message)
 
         # ADMIN
-        elif asked_for_announcement:
+        if asked_for_announcement:
             await announcement.handle_announcement(message)
-        
+
         # General when her name is said
-        else:
+        if not any([asked_for_joke, asked_for_day_of_week, asked_for_meme, asked_for_poll, asked_for_funfact, asked_for_randomsite, asked_for_rps, asked_for_ttt, asked_for_checkers, told_goodnight, told_hello, told_wcrs, asked_for_announcement]):
             recent_pings.clear()
             bot_muted = False
             current_time = datetime.now()
             if cooldown_end_time is None or current_time >= cooldown_end_time:
                 await message.channel.send('Someone say my name?')
                 cooldown_end_time = current_time + timedelta(minutes=15)
-    
+
     elif 'hello chat' in message_content_lower:
         await hello.send_hello(message)
 

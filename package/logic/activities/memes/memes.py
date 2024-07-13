@@ -24,8 +24,11 @@ async def send_meme(message):
             meme = random.choice(memes)
             meme_url = meme['url']
             meme_id = meme['id']
+
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            meme_texts_path = os.path.join(current_dir, 'meme_texts.json')
             
-            with open('logic/meme_texts.json', 'r') as file:
+            with open(meme_texts_path, 'r') as file:
                 meme_texts = json.load(file)
             
             top_text = random.choice(meme_texts['goofy_texts'])
