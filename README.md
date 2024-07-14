@@ -27,3 +27,12 @@ CONVERSATION:
 
 ADMIN:
   - I can make announcements for you!
+
+# So how do you use me?
+
+Easy! You just say, "Matsuda," or something similar to that followed by what you want me to do (e.g. "let's play tictactoe", "tell me a joke"). Of course, there are multiple ways of addressing me, so feel free to experiment a bit!
+  - Just...don't ping me. Seriously.
+
+# What if you want to make a suggestion for features?
+
+The discussion board is there for a reason! Go ham--I welcome all sorts of suggestions!
