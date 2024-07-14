@@ -36,3 +36,16 @@ Easy! You just say, "Matsuda," or something similar to that followed by what you
 # What if you want to make a suggestion for features?
 
 The discussion board is there for a reason! Go ham--I welcome all sorts of suggestions!
+
+# Other things to note:
+
+- Want to see ideas and plans for my development? Just look at the TODO.txt file.
+- I also keep track of my known bugs and issues. Check KNOWN BUGS.txt for that sort of info.
+- As of right now, I go online and offline at different intervals. That's because I am constantly in development, so keep that in mind!
+- You can use my code as reference for anything, but just don't steal me verbatim!
+
+# Contact
+
+Want to contact my developer about anything? His Discord @L4w1i3t is almost always open!
+
+Well, that's enough of my rambling. See ya, and have fun!
