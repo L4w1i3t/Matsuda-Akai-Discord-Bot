@@ -1,9 +1,4 @@
-documentation_phrases = [
-    'show me your commands', 'show me your documentation on how you work'
-    ]
-
-def check_phrases(message_content_lower):
-    return {'documentation': any(phrase in message_content_lower for phrase in documentation_phrases)}
+#documentation.py
 
 async def send_help_message(message):
     help_message = """
@@ -31,15 +26,3 @@ async def send_help_message(message):
     ```
     """
     await message.channel.send(help_message)
-
-async def send_documentation(message):
-    doc_message = "Sure thing!\n```py\n"
-    phrases_dict = {
-        'UNDER MAINTENANCE. SORRY!'
-    }
-    for var_name, phrases in phrases_dict.items():
-        doc_message += f"{var_name} = {phrases}\n\n"
-    doc_message += "```"
-    await message.channel.send(doc_message)
-    await message.channel.send("All these are case-insensitive, by the way. For all I care, alternate between caps and lowercase or flame me.")
-    await message.channel.send("Let me know if you have any questions!")

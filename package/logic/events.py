@@ -63,8 +63,7 @@ async def on_message(message, bot):
     check_goodnight_flags = goodnight.check_phrases(message_content_lower)
     check_hello_flags = hello.check_phrases(message_content_lower)
     check_wcrs_flags = wcrs.check_phrases(message_content_lower)
-
-    check_documentation_flags = documentation.check_phrases(message_content_lower)
+    
     check_admin_flags = announcement.check_phrases(message_content_lower)
 
     # Setups for conditionals below
@@ -77,7 +76,6 @@ async def on_message(message, bot):
     told_goodnight = check_goodnight_flags['night_phrases']
     told_hello = check_hello_flags['hello_phrases']
     told_wcrs = check_wcrs_flags['wcrs_phrases']
-    asked_for_documentation = check_documentation_flags['documentation']
     asked_for_rps = check_rps_flags['rps_phrases']
     asked_for_ttt = check_ttt_flags['tic-tac-toe']
     asked_for_checkers = check_checkers_flags['checkers']
@@ -97,8 +95,6 @@ async def on_message(message, bot):
         # Documentation and command help
         if '!help' in message_content_lower or 'what do you do' in message_content_lower or 'what can you do' in message_content_lower:
             await documentation.send_help_message(message)
-        if asked_for_documentation:
-            await documentation.send_documentation(message)
 
         # Activities
         if asked_for_joke:
