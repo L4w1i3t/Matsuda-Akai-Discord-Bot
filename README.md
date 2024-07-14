@@ -20,7 +20,7 @@ ACTIVITIES:
 
 CONVERSATION:
   - I can say hello!
-    *I also respond to "Hello chat"
+    - I also respond to "Hello chat"
   - I can tell you goodnight!
   - If you only mention my name without any other command, that'll grab my attention!
   - Please don't ping me, or I'll get SUPER mad!!!
