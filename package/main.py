@@ -14,7 +14,7 @@ def main():
     decrypt_env()
     load_dotenv(dotenv_path='package/.env.decrypted')
 
-    bot = commands.Bot(command_prefix='!', intents=discord.Intents.all())
+    bot = commands.Bot(command_prefix='!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', intents=discord.Intents.all())
 
     # Set up events
     setup_events(bot)

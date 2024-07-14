@@ -16,7 +16,7 @@ tic_tac_toe_phrases = [
 
 # Function to check if the message content contains any tic-tac-toe phrases
 def check_phrases(message_content_lower):
-    return {'tic-tac-toe': any(phrase in message_content_lower for phrase in tic_tac_toe_phrases)}
+    return {'tic-tac-toe_phrases': any(phrase in message_content_lower for phrase in tic_tac_toe_phrases)}
 
 # Async function to handle the tic-tac-toe game
 async def play_ttt(message, bot):

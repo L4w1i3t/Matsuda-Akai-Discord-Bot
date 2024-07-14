@@ -35,6 +35,7 @@ async def on_message(message, bot):
     if message.author.bot:
         return
 
+    # Oddly specific purpose for a given server
     clown_role = next((role for role in message.guild.roles if role.name.lower() == "clown"), None)
     if clown_role and clown_role in message.author.roles:
         if any(mention in message.content for mention in ['@everyone', '@here']) or message.mentions:
@@ -42,6 +43,7 @@ async def on_message(message, bot):
             await message.channel.send(f"{message.author.mention} ***SHUT.***")
             return
 
+    # If the bot is pinged
     bot_mentioned = bot.user in message.mentions
     if bot_mentioned:
         recent_pings = await handle_pings(message, recent_pings)
@@ -63,8 +65,9 @@ async def on_message(message, bot):
     check_goodnight_flags = goodnight.check_phrases(message_content_lower)
     check_hello_flags = hello.check_phrases(message_content_lower)
     check_wcrs_flags = wcrs.check_phrases(message_content_lower)
-    
-    check_admin_flags = announcement.check_phrases(message_content_lower)
+
+    check_announcement_flags = announcement.check_phrases(message_content_lower)
+    check_help_flags = documentation.check_phrases(message_content_lower)
 
     # Setups for conditionals below
     asked_for_day_of_week = check_flags['day_of_week_phrases']
@@ -77,9 +80,10 @@ async def on_message(message, bot):
     told_hello = check_hello_flags['hello_phrases']
     told_wcrs = check_wcrs_flags['wcrs_phrases']
     asked_for_rps = check_rps_flags['rps_phrases']
-    asked_for_ttt = check_ttt_flags['tic-tac-toe']
+    asked_for_ttt = check_ttt_flags['tic-tac-toe_phrases']
     asked_for_checkers = check_checkers_flags['checkers']
-    asked_for_announcement = check_admin_flags['announcements']
+    asked_for_announcement = check_announcement_flags['announcements']
+    asked_for_help = check_help_flags['help_phrases']
 
     if bot_addressed and not bot_muted:
         recent_pings.clear()
@@ -93,41 +97,53 @@ async def on_message(message, bot):
             await wcrs.send_wcrs(message)
 
         # Documentation and command help
-        if '!help' in message_content_lower or 'what do you do' in message_content_lower or 'what can you do' in message_content_lower:
+        if asked_for_help:
             await documentation.send_help_message(message)
+            return
 
         # Activities
         if asked_for_joke:
             await jokes.send_joke(message)
+            return
         if asked_for_day_of_week:
             await dayoftheweek.send_day_of_week(message)
+            return
         if asked_for_meme:
             await memes.send_meme(message)
+            return
         if asked_for_poll:
             await poll.create_poll(message)
+            return
         if asked_for_funfact:
             await funfact.send_funfact(message)
+            return
         if asked_for_randomsite:
             await uselessweb.send_randomsite(message)
+            return
         if asked_for_rps:
             await rps.play_rps(message, bot)
+            return
         if asked_for_ttt:
             await ttt.play_ttt(message, bot)
+            return
         if asked_for_checkers:
             await playcheckers.play_checkers(message, bot)
+            return
 
         # ADMIN
         if asked_for_announcement:
             await announcement.handle_announcement(message)
+            return
 
-        # General when her name is said
-        if not any([asked_for_joke, asked_for_day_of_week, asked_for_meme, asked_for_poll, asked_for_funfact, asked_for_randomsite, asked_for_rps, asked_for_ttt, asked_for_checkers, told_goodnight, told_hello, told_wcrs, asked_for_announcement]):
-            recent_pings.clear()
+        # General when her name is said when there are no other commands
+        else:
             bot_muted = False
             current_time = datetime.now()
             if cooldown_end_time is None or current_time >= cooldown_end_time:
                 await message.channel.send('Someone say my name?')
                 cooldown_end_time = current_time + timedelta(minutes=15)
+                return
+            return
 
     elif 'hello chat' in message_content_lower:
         await hello.send_hello(message)
