@@ -2,6 +2,12 @@
 
 - Command Bot Current version: 0.5.0
 
+# Invite Link:
+
+https://discord.com/oauth2/authorize?client_id=1245026067639701616
+
+# Introduction
+
 "Vroom Vroom, baybee!"
 
 Welcome to the repository for my own Discord Bot! This project is designed to eventually create a walking, talking version of me, whether it be on Discord or otherwise! Of course, I haven't gotten to the whole "large language model" part of this project, but I have been learning a lot of commands recently!
@@ -34,6 +40,10 @@ ADMIN:
 
 Easy! You just say, "Matsuda," or something similar to that followed by what you want me to do (e.g. "let's play tictactoe", "tell me a joke"). Of course, there are multiple ways of addressing me, so feel free to experiment a bit!
   - Just...don't ping me. Seriously.
+
+# When Inviting. . .
+
+You might get terrified when all these different permissions show up. Don't worry, I'm not a spy! Just click, enable, and disable whichever ones you want to use for your server! I'm not a one-trick pony, after all!
 
 # What if you want to make a suggestion for features?
 
