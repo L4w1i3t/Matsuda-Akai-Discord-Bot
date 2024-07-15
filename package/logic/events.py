@@ -1,4 +1,5 @@
 import discord
+from discord import Game, Status
 from discord.ext import commands
 import asyncio
 import requests
@@ -24,7 +25,7 @@ cooldown_end_time = None
 Q_table = load_Q_table()
 
 async def on_ready():
-    print('MATSUDA IS ONLINE!')
+    print('Logged in as Matsuda Akai. . .')
 
 async def on_message(message, bot):
     global bot_muted, cooldown_end_time, recent_pings, Q_table
@@ -34,6 +35,12 @@ async def on_message(message, bot):
     reward = 0
 
     if message.author.bot:
+        return
+    
+    # Handle the case where the message is a DM
+    if message.guild is None:
+        await message.channel.send('The robot you are trying to reach does not have a DM feature. Please try again in...eventually.')
+        print("Received a direct message")
         return
 
     # Oddly specific purpose for a given server
@@ -92,10 +99,13 @@ async def on_message(message, bot):
         # Conversational
         if told_goodnight:
             await goodnight.send_goodnight(message)
+            return
         if told_hello:
             await hello.send_hello(message)
+            return
         if told_wcrs:
             await wcrs.send_wcrs(message)
+            return
 
         # Documentation and command help
         if asked_for_help:
@@ -148,6 +158,7 @@ async def on_message(message, bot):
 
     elif 'hello chat' in message_content_lower:
         await hello.send_hello(message)
+        return
 
 def setup_events(bot):
     bot.add_listener(on_ready)

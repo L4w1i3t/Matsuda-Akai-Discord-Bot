@@ -1,6 +1,6 @@
 ﻿# Matsuda-Akai-Discord-Bot
 
-- Current version: 0.5.0
+- Command Bot Current version: 0.5.0
 
 "Vroom Vroom, baybee!"
 
