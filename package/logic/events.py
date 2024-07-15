@@ -6,9 +6,10 @@ import random
 from datetime import datetime, timedelta
 
 # Import necessary logic or necessary files from their given directories
+from logic import documentation
 from logic.activities.tictactoe.minimax import find_best_move
 from logic.activities.tictactoe.qlearn import choose_action, update_Q_table, get_state, load_Q_table, save_Q_table
-from logic.activities import dayoftheweek, jokes, poll, rps, documentation, funfact
+from logic.activities import dayoftheweek, jokes, poll, rps, funfact
 from logic.activities.memes import memes
 from logic.activities.uselessweb import uselessweb
 from logic.activities.tictactoe import ttt

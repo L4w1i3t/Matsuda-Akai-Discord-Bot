@@ -1,5 +1,7 @@
 ﻿# Matsuda-Akai-Discord-Bot
 
+- Current version: 0.5.0
+
 "Vroom Vroom, baybee!"
 
 Welcome to the repository for my own Discord Bot! This project is designed to eventually create a walking, talking version of me, whether it be on Discord or otherwise! Of course, I haven't gotten to the whole "large language model" part of this project, but I have been learning a lot of commands recently!
