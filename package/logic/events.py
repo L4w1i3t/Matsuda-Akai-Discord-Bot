@@ -30,10 +30,6 @@ async def on_ready():
 async def on_message(message, bot):
     global bot_muted, cooldown_end_time, recent_pings, Q_table
 
-    state = None
-    action = None
-    reward = 0
-
     if message.author.bot:
         return
     

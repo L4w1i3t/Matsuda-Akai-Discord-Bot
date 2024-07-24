@@ -18,7 +18,7 @@ ACTIVITIES:
   - I can tell you random jokes!
   - I can make and send random memes for you! Don't fault me if they don't make sense, I'm just a robot!
   - I can tell you what day of the week it is...for some reason!
-  - I can create polls on Discord for you!
+  - I can create polls on Discord for you! (Although this feature got powercrept SUPER hard...)
   - I can tell you random fun facts!
   - I can take you to a random website to cure your boredom!
   - I can play games with you, such as:
@@ -43,7 +43,7 @@ Easy! You just say, "Matsuda," or something similar to that followed by what you
 
 # When Inviting. . .
 
-You might get terrified when all these different permissions show up. Don't worry, I'm not a spy! Just click, enable, and disable whichever ones you want to use for your server! I'm not a one-trick pony, after all!
+You might get terrified when all these different permissions show up. Don't worry, I'm not a spy! Just click, enable, and disable whichever ones you want to use for your server. I'm not a one-trick pony, after all!
 
 # What if you want to make a suggestion for features?
 
@@ -61,3 +61,5 @@ The discussion board is there for a reason! Go ham--I welcome all sorts of sugge
 Want to contact my developer about anything? His Discord @L4w1i3t is almost always open!
 
 Well, that's enough of my rambling. See ya, and have fun!
+
+-Matsuda Akai

@@ -39,7 +39,7 @@ def main():
         # If the bot crashes for whatever reason
         except Exception:
             log_crash_report(sys.exc_info())
-            print("Bot crashed. Restarting...")
+            print("Crashed. Restarting...")
 
 if __name__ == "__main__":
     main()
