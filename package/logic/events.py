@@ -66,9 +66,9 @@ async def on_message(message, bot):
     check_rps_flags = rps.check_phrases(message_content_lower)
     check_ttt_flags = ttt.check_phrases(message_content_lower)
     check_checkers_flags = playcheckers.check_phrases(message_content_lower)
-    check_goodnight_flags = goodnight.check_phrases(message_content_lower)
-    check_hello_flags = hello.check_phrases(message_content_lower)
-    check_wcrs_flags = wcrs.check_phrases(message_content_lower)
+    #check_goodnight_flags = goodnight.check_phrases(message_content_lower)
+    #check_hello_flags = hello.check_phrases(message_content_lower)
+    #check_wcrs_flags = wcrs.check_phrases(message_content_lower)
 
     check_announcement_flags = announcement.check_phrases(message_content_lower)
     check_help_flags = documentation.check_phrases(message_content_lower)
@@ -80,9 +80,9 @@ async def on_message(message, bot):
     asked_for_poll = check_poll_flags['poll_phrases']
     asked_for_funfact = check_funfact_flags['funfact_phrases']
     asked_for_randomsite = check_uselessweb_flags['uselessweb_phrases']
-    told_goodnight = check_goodnight_flags['night_phrases']
-    told_hello = check_hello_flags['hello_phrases']
-    told_wcrs = check_wcrs_flags['wcrs_phrases']
+    #told_goodnight = check_goodnight_flags['night_phrases']
+    #told_hello = check_hello_flags['hello_phrases']
+    #told_wcrs = check_wcrs_flags['wcrs_phrases']
     asked_for_rps = check_rps_flags['rps_phrases']
     asked_for_ttt = check_ttt_flags['tic-tac-toe_phrases']
     asked_for_checkers = check_checkers_flags['checkers']
@@ -91,17 +91,6 @@ async def on_message(message, bot):
 
     if bot_addressed and not bot_muted:
         recent_pings.clear()
-
-        # Conversational
-        if told_goodnight:
-            await goodnight.send_goodnight(message)
-            return
-        if told_hello:
-            await hello.send_hello(message)
-            return
-        if told_wcrs:
-            await wcrs.send_wcrs(message)
-            return
 
         # Documentation and command help
         if asked_for_help:
@@ -151,10 +140,6 @@ async def on_message(message, bot):
                 cooldown_end_time = current_time + timedelta(minutes=15)
                 return
             return
-
-    elif 'hello chat' in message_content_lower:
-        await hello.send_hello(message)
-        return
 
 def setup_events(bot):
     bot.add_listener(on_ready)
