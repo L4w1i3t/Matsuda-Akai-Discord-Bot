@@ -13,3 +13,6 @@
 # Ignore build directories
 build/
 MatsudaAkaiBot.egg-info/
+
+# ignore server-side stuff
+ServerActivate/
