@@ -11,6 +11,9 @@ yarn-error.log*
 # Build output
 dist/
 
+# Other folders
+user_inventories/
+
 # IDE files
 .vscode/
 .idea/
