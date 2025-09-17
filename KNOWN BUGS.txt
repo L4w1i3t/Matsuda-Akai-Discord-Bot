@@ -1,4 +1,0 @@
-List of known bugs and issues
-#-----------------------------------------------------------
-
-Pretty much the entire checkers feature

@@ -1,0 +1,53 @@
+{
+  "userId": "225780693190311937",
+  "characters": [
+    {
+      "name": "Ben",
+      "rarity": "A-Rank",
+      "game": "zzz",
+      "mergeCount": 0,
+      "obtainedAt": "2025-08-31T18:35:42.408Z"
+    },
+    {
+      "name": "Billy",
+      "rarity": "A-Rank",
+      "game": "zzz",
+      "mergeCount": 0,
+      "obtainedAt": "2025-08-31T18:35:42.412Z"
+    }
+  ],
+  "consumables": {
+    "zzz:Enhancement Materials": {
+      "name": "Enhancement Materials",
+      "rarity": "B-Rank",
+      "game": "zzz",
+      "quantity": 31
+    },
+    "zzz:Promotion Materials": {
+      "name": "Promotion Materials",
+      "rarity": "A-Rank",
+      "game": "zzz",
+      "quantity": 15
+    },
+    "zzz:Dennies": {
+      "name": "Dennies",
+      "rarity": "B-Rank",
+      "game": "zzz",
+      "quantity": 2810
+    },
+    "zzz:B-Rank Drive Disc": {
+      "name": "B-Rank Drive Disc",
+      "rarity": "B-Rank",
+      "game": "zzz",
+      "quantity": 4
+    },
+    "zzz:Basic W-Engine": {
+      "name": "Basic W-Engine",
+      "rarity": "B-Rank",
+      "game": "zzz",
+      "quantity": 1
+    }
+  },
+  "totalPulls": 10,
+  "lastUpdated": "2025-08-31T18:35:42.412Z"
+}

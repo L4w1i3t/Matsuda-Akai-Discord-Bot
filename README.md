@@ -1,65 +1,110 @@
-﻿# Matsuda-Akai-Discord-Bot
+# Matsuda Bot
 
-- Command Bot Current version: 0.5.0
+A TypeScript Discord bot that acts as an AI companion and provides moderation features.
 
-# Invite Link:
+## Features
 
-https://discord.com/oauth2/authorize?client_id=1245026067639701616
+- **AI Companion**: Acts like another user in the server, responding naturally to conversations
+- **Moderation**: Automated moderation including spam detection, content filtering, and caps checking
+- **DM Support**: Can interact with users via direct messages
+- **TypeScript**: Fully typed for better development experience
 
-# Introduction
+## Setup
 
-"Vroom Vroom, baybee!"
+### Prerequisites
 
-Welcome to the repository for my own Discord Bot! This project is designed to eventually create a walking, talking version of me, whether it be on Discord or otherwise! Of course, I haven't gotten to the whole "large language model" part of this project, but I have been learning a lot of commands recently!
+- Node.js (v16 or higher)
+- A Discord application and bot token
 
-Here is the list of things that I CAN do right now:
+### Installation
 
-ACTIVITIES:
-  - I can tell you random jokes!
-  - I can make and send random memes for you! Don't fault me if they don't make sense, I'm just a robot!
-  - I can tell you what day of the week it is...for some reason!
-  - I can create polls on Discord for you! (Although this feature got powercrept SUPER hard...)
-  - I can tell you random fun facts!
-  - I can take you to a random website to cure your boredom!
-  - I can play games with you, such as:
-      - Rock Paper Scissors
-      - Tic Tac Toe (with three different difficulties!)
-      - Checkers (CURRENTLY STILL IN DEVELOPMENT. DO NOT USE THIS COMMAND UNLESS YOU WANT TO BREAK ME!!!
+1. Clone this repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-CONVERSATION:
-  - I can say hello!
-    - I also respond to "Hello chat"
-  - I can tell you goodnight!
-  - If you only mention my name without any other command, that'll grab my attention!
-  - Please don't ping me, or I'll get SUPER mad!!!
+3. Create your environment file:
+   ```bash
+   cp .env.example .env
+   ```
 
-ADMIN:
-  - I can make announcements for you!
+4. Edit `.env` and add your Discord bot token:
+   ```
+   DISCORD_TOKEN=your_bot_token_here
+   ```
 
-# So how do you use me?
+### Getting a Discord Bot Token
 
-Easy! You just say, "Matsuda," or something similar to that followed by what you want me to do (e.g. "let's play tictactoe", "tell me a joke"). Of course, there are multiple ways of addressing me, so feel free to experiment a bit!
-  - Just...don't ping me. Seriously.
+1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
+2. Create a new application
+3. Go to the "Bot" section
+4. Click "Add Bot"
+5. Copy the token and add it to your `.env` file
+6. Enable the following bot permissions:
+   - Send Messages
+   - Read Messages
+   - Manage Messages (for moderation)
+   - Read Message History
 
-# When Inviting. . .
+### Inviting the Bot
 
-You might get terrified when all these different permissions show up. Don't worry, I'm not a spy! Just click, enable, and disable whichever ones you want to use for your server. I'm not a one-trick pony, after all!
+Generate an invite link with the following permissions:
+- `applications.commands`
+- `bot`
 
-# What if you want to make a suggestion for features?
+Required bot permissions:
+- Send Messages
+- Read Messages
+- Manage Messages
+- Read Message History
 
-The discussion board is there for a reason! Go ham--I welcome all sorts of suggestions!
+## Development
 
-# Other things to note:
+### Scripts
 
-- Want to see ideas and plans for my development? Just look at the TODO.txt file.
-- I also keep track of my known bugs and issues. Check KNOWN BUGS.txt for that sort of info.
-- As of right now, I go online and offline at different intervals. That's because I am constantly in development, so keep that in mind!
-- You can use my code as reference for anything, but just don't steal me verbatim!
+- `npm run dev` - Run the bot in development mode with ts-node
+- `npm run build` - Compile TypeScript to JavaScript
+- `npm start` - Run the compiled bot
+- `npm run watch` - Watch for changes and recompile
 
-# Contact
+### Project Structure
 
-Want to contact my developer about anything? His Discord @L4w1i3t is almost always open!
+```
+src/
+├── index.ts                 # Main bot entry point
+├── handlers/
+│   ├── messageHandler.ts    # AI companion functionality
+│   └── moderationHandler.ts # Moderation features
+```
 
-Well, that's enough of my rambling. See ya, and have fun!
+## Configuration
 
--Matsuda Akai
+The bot can be customized by modifying the handler files:
+
+- **AI Companion**: Edit `src/handlers/messageHandler.ts` to change response behavior
+- **Moderation**: Edit `src/handlers/moderationHandler.ts` to adjust moderation rules
+
+## Usage
+
+Once the bot is running and invited to your server:
+
+1. **AI Companion Features**:
+   - Mention the bot to get a response
+   - The bot will occasionally respond naturally to conversations (5% chance)
+
+2. **Moderation Features**:
+   - Automatically detects and removes spam messages
+   - Filters inappropriate content (customize the word list)
+   - Prevents excessive caps usage
+
+## Development Notes
+
+- The bot uses Discord.js v14
+- All code is written in TypeScript with strict type checking
+- Modular structure for easy feature additions
+- Environment-based configuration
+
+## Contributing
+
+Feel free to submit issues and enhancement requests!

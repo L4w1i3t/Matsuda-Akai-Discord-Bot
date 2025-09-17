@@ -1,18 +1,30 @@
-# Ignore environment variable files
-*.env
-*.env.decrypted
-*.env.enc
-*secret.key
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Ignore learning tables
-*Q_table_TTT.pkl
+# Environment variables
+.env
+.env.example
 
-# Ignore GitHub auto-updater
-*auto-update-minor.bat
+# Build output
+dist/
 
-# Ignore build directories
-build/
-MatsudaAkaiBot.egg-info/
+# IDE files
+.vscode/
+.idea/
 
-# ignore server-side stuff
-ServerActivate/
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# TypeScript cache
+*.tsbuildinfo
+
+.gitignore
+rundev.bat
